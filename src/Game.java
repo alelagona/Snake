@@ -1,23 +1,33 @@
 import java.awt.*;
-import javax.swing.*;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import javax.swing.*;
 
-public class Game extends JPanel {
+
+public class Game extends JPanel implements KeyListener {
     
-    private final int width = 600, height = 600;
-    private final int numOfPixels = 25;
-    private final int pixelSize = width / numOfPixels;
-    private int snakeHeadX, snakeHeadY;
+    public final static int WIDTH = 600, HEIGHT = 600;
+    public final static int NUM_OF_PIXELS = 25;
+    private Pixel snakeHead;
+    private ArrayList<Pixel> snakeBody;
 
 
     public Game() {
-        snakeHeadX = 3;
-        snakeHeadY = 12;
+        snakeHead = new Pixel(4, 12);
+        snakeBody = new ArrayList<Pixel>();
 
-        setPreferredSize(new Dimension(width, height));
+        int x = 1;
+        int y = 12;
+        for(int i = 0; i < 3; i ++){
+            snakeBody.add(new Pixel(x, y));
+            x ++;
+        }
+
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setBackground(Color.BLACK);
+        setFocusable(true);
+        addKeyListener(this);
     }
 
 
@@ -29,40 +39,60 @@ public class Game extends JPanel {
 
     private void draw(Graphics g) {
         // disegno le linee della griglia di gioco
-        int x = pixelSize, y = pixelSize;
+        int x = Pixel.SIZE, y = Pixel.SIZE;
         g.setColor(new Color(51, 51, 51));
 
-        for(int i = 0; i < (numOfPixels - 1); i ++) {
-            g.drawLine(x, 0, x, width);
-            g.drawLine(0, y, width, y);
+        for(int i = 0; i < (NUM_OF_PIXELS - 1); i ++) {
+            g.drawLine(x, 0, x, WIDTH);
+            g.drawLine(0, y, WIDTH, y);
 
-            x += pixelSize;
-            y += pixelSize;
+            x += Pixel.SIZE;
+            y += Pixel.SIZE;
         }
 
-        //disegno il serpente
-        g.setColor(Color.GREEN);
-        g.fillRect((pixelSize * snakeHeadX), (pixelSize * snakeHeadY), pixelSize, pixelSize);
-    }
-
-
-    public void increaseSnakeHeadX() {
-        snakeHeadX ++;
-    }
-
+        // disegno la testa del serpente
+        g.setColor(Color.WHITE);
+        g.fillRect((Pixel.SIZE * snakeHead.getX()), (Pixel.SIZE * snakeHead.getY()), Pixel.SIZE, Pixel.SIZE);
     
-    public void decreaseSnakeHeadX() {
-        snakeHeadX --;
+        // disegno il corpo del serpente
+        g.setColor(Color.GREEN);
+        for(int i = 0; i < snakeBody.size(); i ++)
+            g.fillRect((Pixel.SIZE * snakeBody.get(i).getX()), (Pixel.SIZE * snakeBody.get(i).getY()), Pixel.SIZE, Pixel.SIZE);
     }
 
 
-    public void increaseSnakeHeadY() {
-        snakeHeadY ++;
+    public void keyTyped(KeyEvent e) {}
+
+
+    public void keyPressed(KeyEvent e) {
+        
+        if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT ||
+            e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT ||
+            e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP ||
+            e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
+                for(int i = 0; i < (snakeBody.size() - 1); i ++) {
+                    snakeBody.get(i).setX(snakeBody.get(i + 1).getX());
+                    snakeBody.get(i).setY(snakeBody.get(i + 1).getY());
+                }
+                
+                snakeBody.get(snakeBody.size() - 1).setX(snakeHead.getX());
+                snakeBody.get(snakeBody.size() - 1).setY(snakeHead.getY());
+
+                if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT)
+                    snakeHead.increaseX();
+                else if(e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT)
+                    snakeHead.decreaseX();
+                else if(e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP)
+                    snakeHead.decreaseY();
+                else if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN)
+                    snakeHead.increaseY();
+
+                repaint();
+            }
+
     }
 
 
-    public void decreaseSnakeHeadY() {
-        snakeHeadY --;
-    }
+    public void keyReleased(KeyEvent e) {}
 
 }
