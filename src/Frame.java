@@ -1,49 +1,49 @@
+import javax.security.auth.kerberos.KeyTab;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class Frame extends JFrame {
-    private Container c;
-    private JPanel mainPanel;
-    private JPanel[][] caselle;
-    private final int nCaselle = 15;
     
+    private Game game;
+
+
     Frame () {
         super("Snake");
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setResizable(false);
-        this.setSize(600, 600);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setResizable(false);
         
-        c = getContentPane();     
+        game = new Game();
+        add(game);
         
-        /* Creazione del campo di gioco:
-        * il campo di gioco è formato da una matrice di
-        * pannelli disposti nel contentPane per mezzo
-        * di un GridLayout
-        */
-        mainPanel = new JPanel() {
-            public Insets getInsets() {
-                return new Insets(5, 5, 5, 5);
-            }
-        };
-        mainPanel.setBackground(Color.decode("#ffbb33"));   
-        mainPanel.setLayout(new GridLayout(nCaselle, nCaselle));
-        c.add(mainPanel);
-        caselle = new JPanel[nCaselle][nCaselle];
-        Boolean light = true;
-        for(int i = 0; i < nCaselle; i ++) {
-            for(int j = 0; j < nCaselle; j ++) {
-                caselle[i][j] = new JPanel();
-                if(light)
-                    caselle[i][j].setBackground(Color.decode("#ffcc66"));
-                else
-                    caselle[i][j].setBackground(Color.decode("#ffbb33"));
-
-                mainPanel.add(caselle[i][j]);
-                light = !light;
-            }
-        }
-        
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+        addKeyListener(new K());
     }
+
+    private class K implements KeyListener {
+
+        public void keyTyped(KeyEvent e) {}
+
+
+        public void keyPressed(KeyEvent e) {
+            if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT)
+                game.increaseSnakeHeadX();
+            else if(e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT)
+                game.decreaseSnakeHeadX();
+            else if(e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP)
+                game.decreaseSnakeHeadY();
+            else if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN)
+                game.increaseSnakeHeadY();
+            
+            game.repaint();
+        }
+
+
+        public void keyReleased(KeyEvent e) {}
+
+    }
+
 }
