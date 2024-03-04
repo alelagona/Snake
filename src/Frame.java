@@ -11,12 +11,12 @@ public class Frame extends JFrame {
         setResizable(false);
         
         game = new Game();
-        game.requestFocus();
         add(game);
         
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+        game.play();
     }
 
 }

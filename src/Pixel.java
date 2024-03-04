@@ -1,6 +1,6 @@
 public class Pixel {
 
-    public final static int SIZE = Game.WIDTH / Game.NUM_OF_PIXELS;
+    public final static int SIZE = Game.WIDTH / Game.PIXEL_FOR_SIDE;
     private int x;
     private int y;
 
