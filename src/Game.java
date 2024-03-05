@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -8,15 +10,15 @@ import javax.swing.*;
 import java.lang.Thread;
 
 
-public class Game extends JPanel implements KeyListener {
+public class Game extends JPanel implements KeyListener, Runnable {
     
     public final static int WIDTH = 600, HEIGHT = 600;
-    public final static int PIXEL_FOR_SIDE = 25;
+    public final static int PIXEL_FOR_SIDE = 30;
     private Pixel snakeHead, apple;
     private ArrayList<Pixel> snakeBody;
     private char direction;
     private boolean gameOver;
-
+    private int score;
 
     public Game() {
         // inizializzo le variabili di gioco
@@ -77,18 +79,23 @@ public class Game extends JPanel implements KeyListener {
         // disegno la mela
         g.setColor(Color.RED);
         g.fillOval((Pixel.SIZE * apple.getX()), (Pixel.SIZE * apple.getY()), Pixel.SIZE, Pixel.SIZE);
+    
+        // disegno il punteggio
+        g.setColor(Color.WHITE);
+        try {
+            Font font = Font.createFont(Font.TRUETYPE_FONT, new File("res/digital-7.ttf"));
+            g.setFont(font.deriveFont(Font.PLAIN,38));
+        } catch (FontFormatException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        g.drawString("Score: " + String.valueOf(score), 245, 40);
     }
 
 
-    public void play() {
-        while(true) {
-            //delay per ogni spostamento
-            try {
-                Thread.sleep(60);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+    public void run() {
+        while(!gameOver) {
             //sposto le caselle dall'ultima alla terza su quella successiva
             for(int i = 0; i < (snakeBody.size() - 1); i ++) {
                 snakeBody.get(i).setX(snakeBody.get(i + 1).getX());
@@ -100,18 +107,24 @@ public class Game extends JPanel implements KeyListener {
             snakeBody.get(snakeBody.size() - 1).setY(snakeHead.getY());
             
             // sposto la testa
-            if(direction == 'R')
-                snakeHead.increaseX();
-            else if(direction == 'U')
-                snakeHead.decreaseY();
-            else if(direction == 'L')
-                snakeHead.decreaseX();
-            else if(direction == 'D')
-                snakeHead.increaseY();
+            switch(direction) {
+                case 'R':
+                    snakeHead.increaseX();
+                    break;
+                case 'U':
+                    snakeHead.decreaseY();  
+                    break;
+                case 'L':
+                    snakeHead.decreaseX();
+                    break;
+                case 'D':
+                    snakeHead.increaseY();
+            }
 
             // se il serpente mangia la mela, aggiungo un pixel al corpo
             // e ricreo la mela con coordinate randm
             if(snakeHead.hasSameCoordinatesOf(apple)) {
+                score ++;
                 Random r = new Random();
                 snakeBody.add(new Pixel(snakeBody.get(snakeBody.size() - 1).getX(), snakeBody.get(snakeBody.size() - 1).getY()));
                 
@@ -145,6 +158,13 @@ public class Game extends JPanel implements KeyListener {
 
             if(!gameOver)
                 repaint();
+
+            //delay per ogni spostamento
+            try {
+                Thread.sleep(60);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     
