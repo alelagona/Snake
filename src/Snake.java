@@ -44,18 +44,32 @@ public class Snake extends ArrayList<Pixel> {
     }
 
 
-    public boolean gameOver() {
+    public boolean gameOver(char direction) {
+        // sposto la testa per vedere se ci sarà una collisione
+        this.moveHead(direction, true);
+
         // controllo se il serpente collide con i bordi della finestra
-        if(this.get(0).getX() < 0 || this.get(0).getY() < 0)
-            return true; 
-        if(this.get(0).getX() > (Game.PIXEL_FOR_SIDE - 1) || this.get(0).getY() > (Game.PIXEL_FOR_SIDE - 1))
+        if(this.get(0).getX() < 0 || this.get(0).getY() < 0) {
+            // riporto la testa indietro
+            moveHead(direction, false);
             return true;
+        }
+        if(this.get(0).getX() > (Game.PIXEL_FOR_SIDE - 1) || this.get(0).getY() > (Game.PIXEL_FOR_SIDE - 1)) {
+            // riporto la testa indietro
+            moveHead(direction, false);
+            return true;
+        }
 
         // controllo se il serpente collide su se stesso
         for(int i = 1; i < this.size(); i ++)
-            if(this.get(0).hasSameCoordinatesOf(this.get(i)))
+            if(this.get(0).hasSameCoordinatesOf(this.get(i))) {
+                // riporto la testa indietro
+                moveHead(direction, false);
                 return true;
+            }
 
+        // riporto la testa indietro
+        moveHead(direction, false);
         return false;
     }        
 
@@ -85,6 +99,7 @@ public class Snake extends ArrayList<Pixel> {
             }
             return true;
         }
+        // riporto la testa indietro
         moveHead(direction, false);
         return false;
     }

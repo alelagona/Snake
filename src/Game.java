@@ -12,17 +12,19 @@ public class Game extends JPanel implements KeyListener {
     
     public final static int WIDTH = 600, HEIGHT = 600;
     public final static int PIXEL_FOR_SIDE = 30;
-    public final int speed = 100;
+    public int speed = 100;
     private Pixel apple;
     private Snake snake;
     private char direction;
-    private boolean gameOver;
+    private boolean gameOver, repainted;
     private int score;
 
     Game() {
         // inizializzo le variabili di gioco
+        speed = 100;
         direction = 'R';
         gameOver = false;
+        repainted = false;
 
         // inizializzo il serpente
         snake = new Snake();
@@ -94,15 +96,18 @@ public class Game extends JPanel implements KeyListener {
     public void play() {
         // gioco eseguito in loop finchè non si perde o si vince
         while(!gameOver) {
-            gameOver = snake.gameOver();
+
+            gameOver = snake.gameOver(direction);
             
             if(snake.eatApple(apple, direction))
                 score ++;
             else
                 snake.move(direction);
 
-            if(!gameOver)
+            if(!gameOver) {
                 repaint();
+                repainted = true;
+            }
             else
                 System.out.println("game over");
 
@@ -117,19 +122,29 @@ public class Game extends JPanel implements KeyListener {
 
 
     public void keyPressed(KeyEvent e) {
-        // ascoltatore della tastiera che cambia la direzione del serpente
-        if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            if(direction != 'L')
-                direction = 'R';
-        } else if(e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
-            if(direction != 'D')
-                direction = 'U';
-        } else if(e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
-            if(direction != 'R')
-                direction = 'L';                    
-        } else if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
-            if(direction != 'U')
-                direction = 'D';
+        if(repainted) {
+            // ascoltatore della tastiera che cambia la direzione del serpente
+            if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                if(direction != 'L') {
+                    direction = 'R';
+                    repainted = false;
+                }
+            } else if(e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
+                if(direction != 'D') {
+                    direction = 'U';
+                    repainted = false;
+                }
+            } else if(e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
+                if(direction != 'R') {
+                    direction = 'L';                    
+                    repainted = false;
+                }
+            } else if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
+                if(direction != 'U') {
+                    direction = 'D';
+                    repainted = false;
+                }
+            }
         }
     }
             
