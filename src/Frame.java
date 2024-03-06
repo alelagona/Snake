@@ -5,18 +5,18 @@ public class Frame extends JFrame {
     private Game game;
 
 
-    Frame () {
+    Frame() {
         super("Snake");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setResizable(false);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setResizable(false);
         
         game = new Game();
-        add(game);
+        this.add(game);
         
-        pack();
-        setLocationRelativeTo(null);
-        setVisible(true);
-        game.run();
+        this.pack();
+        this.setLocationRelativeTo(null);
+        this.setVisible(true);
+        game.play();
     }
 
 }

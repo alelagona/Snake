@@ -3,55 +3,52 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
 
 import javax.swing.*;
 import java.lang.Thread;
 
 
-public class Game extends JPanel implements KeyListener, Runnable {
+public class Game extends JPanel implements KeyListener {
     
     public final static int WIDTH = 600, HEIGHT = 600;
     public final static int PIXEL_FOR_SIDE = 30;
-    private Pixel snakeHead, apple;
-    private ArrayList<Pixel> snakeBody;
+    public final int speed = 100;
+    private Pixel apple;
+    private Snake snake;
     private char direction;
     private boolean gameOver;
     private int score;
 
-    public Game() {
+    Game() {
         // inizializzo le variabili di gioco
         direction = 'R';
         gameOver = false;
 
-        // inizializzo il pixel della testa
-        snakeHead = new Pixel(4, PIXEL_FOR_SIDE / 2);
-        
-        // inizializzo i pixel del corpo
-        snakeBody = new ArrayList<Pixel>();
-        int x = 1, y = PIXEL_FOR_SIDE / 2;
-        for(int i = 0; i < 3; i ++){
-            snakeBody.add(new Pixel(x, y));
-            x ++;
+        // inizializzo il serpente
+        snake = new Snake();
+        int x = 4, y = PIXEL_FOR_SIDE / 2;
+
+        for(int i = 0; i < 4; i ++){
+            snake.add(new Pixel(x, y));
+            x --;
         }
 
-        // inizializzo il pixel della mela
-        apple = new Pixel(PIXEL_FOR_SIDE - 3, PIXEL_FOR_SIDE / 2);
+        // inizializzo la mela
+        apple = new Pixel(PIXEL_FOR_SIDE / 5 * 4, PIXEL_FOR_SIDE / 2);
 
         // impostazioni varie del pannello di gioco
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        setBackground(Color.DARK_GRAY);
-        setFocusable(true);
-        requestFocus();
-        addKeyListener(this);
+        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        this.setBackground(Color.DARK_GRAY);
+        this.setFocusable(true);
+        this.requestFocus();
+        this.addKeyListener(this);
     }
 
 
     public void paint(Graphics g) {
-        // ridisegna il pannello di gioco
+        // ridisegno il pannello di gioco
         super.paintComponent(g);
-        draw(g);
+        this.draw(g);
     }
 
 
@@ -69,15 +66,15 @@ public class Game extends JPanel implements KeyListener, Runnable {
 
         // disegno la testa del serpente
         g.setColor(Color.WHITE);
-        g.fillRect((Pixel.SIZE * snakeHead.getX()), (Pixel.SIZE * snakeHead.getY()), Pixel.SIZE, Pixel.SIZE);
+        g.fillRect((Pixel.SIZE * snake.get(0).getX()), (Pixel.SIZE * snake.get(0).getY()), Pixel.SIZE, Pixel.SIZE);
     
         // disegno il corpo del serpente
         g.setColor(new Color(40, 200, 150));
-        for(int i = 0; i < snakeBody.size(); i ++)
-            g.fillRect((Pixel.SIZE * snakeBody.get(i).getX()), (Pixel.SIZE * snakeBody.get(i).getY()), Pixel.SIZE, Pixel.SIZE);
+        for(int i = 1; i < snake.size(); i ++)
+            g.fillRect((Pixel.SIZE * snake.get(i).getX()), (Pixel.SIZE * snake.get(i).getY()), Pixel.SIZE, Pixel.SIZE);
     
         // disegno la mela
-        g.setColor(Color.RED);
+        g.setColor(new Color(200, 10, 10));
         g.fillOval((Pixel.SIZE * apple.getX()), (Pixel.SIZE * apple.getY()), Pixel.SIZE, Pixel.SIZE);
     
         // disegno il punteggio
@@ -94,95 +91,45 @@ public class Game extends JPanel implements KeyListener, Runnable {
     }
 
 
-    public void run() {
+    public void play() {
+        // gioco eseguito in loop finchè non si perde o si vince
         while(!gameOver) {
-            //sposto le caselle dall'ultima alla terza su quella successiva
-            for(int i = 0; i < (snakeBody.size() - 1); i ++) {
-                snakeBody.get(i).setX(snakeBody.get(i + 1).getX());
-                snakeBody.get(i).setY(snakeBody.get(i + 1).getY());
-            }
-
-            // sposto la seconda casella sulla testa
-            snakeBody.get(snakeBody.size() - 1).setX(snakeHead.getX());
-            snakeBody.get(snakeBody.size() - 1).setY(snakeHead.getY());
+            gameOver = snake.gameOver();
             
-            // sposto la testa
-            switch(direction) {
-                case 'R':
-                    snakeHead.increaseX();
-                    break;
-                case 'U':
-                    snakeHead.decreaseY();  
-                    break;
-                case 'L':
-                    snakeHead.decreaseX();
-                    break;
-                case 'D':
-                    snakeHead.increaseY();
-            }
-
-            // se il serpente mangia la mela, aggiungo un pixel al corpo
-            // e ricreo la mela con coordinate randm
-            if(snakeHead.hasSameCoordinatesOf(apple)) {
+            if(snake.eatApple(apple, direction))
                 score ++;
-                Random r = new Random();
-                snakeBody.add(new Pixel(snakeBody.get(snakeBody.size() - 1).getX(), snakeBody.get(snakeBody.size() - 1).getY()));
-                
-                // controllo che le coordinate della mella non coincidano
-                // con quelle dei pixel del serpente
-                int valid = 0;
-                while(valid != (snakeBody.size() + 1)) {
-                    valid = 0;
-                    apple.setX(r.nextInt(PIXEL_FOR_SIDE));
-                    apple.setY(r.nextInt(PIXEL_FOR_SIDE));
-
-                    if(!apple.hasSameCoordinatesOf(snakeHead))
-                        valid ++;
-
-                    for(int i = 0; i < snakeBody.size(); i ++)
-                        if(!apple.hasSameCoordinatesOf(snakeBody.get(i)))
-                            valid ++;
-                }
-            }
-
-            // se il serpente collide con i bordi della finestra => gameover
-            if(snakeHead.getX() < 0 || snakeHead.getY() < 0)
-                gameOver = true;   
-            if(snakeHead.getX() > (PIXEL_FOR_SIDE - 1) || snakeHead.getY() > (PIXEL_FOR_SIDE - 1))
-                gameOver = true;
-
-            // se il serpente collide su se stesso => gameover
-            for(int i = 0; i < snakeBody.size(); i ++)
-                if(snakeHead.hasSameCoordinatesOf(snakeBody.get(i)))
-                    gameOver = true;
+            else
+                snake.move(direction);
 
             if(!gameOver)
                 repaint();
+            else
+                System.out.println("game over");
 
             //delay per ogni spostamento
             try {
-                Thread.sleep(60);
+                Thread.sleep(speed);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-    
-    
+
+
     public void keyPressed(KeyEvent e) {
         // ascoltatore della tastiera che cambia la direzione del serpente
         if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
             if(direction != 'L')
-            direction = 'R';
+                direction = 'R';
         } else if(e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
             if(direction != 'D')
-            direction = 'U';
+                direction = 'U';
         } else if(e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
             if(direction != 'R')
-            direction = 'L';                    
+                direction = 'L';                    
         } else if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
             if(direction != 'U')
-            direction = 'D';
+                direction = 'D';
         }
     }
             
