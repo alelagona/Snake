@@ -71,7 +71,7 @@ public class Snake extends ArrayList<Pixel> {
         // riporto la testa indietro
         moveHead(direction, false);
         return false;
-    }        
+    }
 
 
     public boolean eatApple(Pixel apple, char direction) {
@@ -87,21 +87,31 @@ public class Snake extends ArrayList<Pixel> {
             this.addFirst(new Pixel(apple.getX(), apple.getY()));
             // controllo che le coordinate della mela non coincidano
             // con quelle dei pixel del serpente
-            int valid = 0;
-            while(valid != this.size()) {
-                valid = 0;
-                apple.setX(r.nextInt(Game.PIXEL_FOR_SIDE));
-                apple.setY(r.nextInt(Game.PIXEL_FOR_SIDE));
-
-                for(int i = 0; i < this.size(); i ++)
-                    if(!apple.hasSameCoordinatesOf(this.get(i)))
-                        valid ++;
+            if(this.size() != Math.pow(Game.PIXEL_FOR_SIDE, 2)) {
+                int valid = 0;
+                while(valid != this.size()) {
+                    valid = 0;
+                    apple.setX(r.nextInt(Game.PIXEL_FOR_SIDE));
+                    apple.setY(r.nextInt(Game.PIXEL_FOR_SIDE));
+    
+                    for(int i = 0; i < this.size(); i ++)
+                        if(!apple.hasSameCoordinatesOf(this.get(i)))
+                            valid ++;
+                }
             }
             return true;
         }
         // riporto la testa indietro
         moveHead(direction, false);
         return false;
+    }
+
+
+    public boolean win() {
+        if(this.size() == Math.pow(Game.PIXEL_FOR_SIDE, 2))
+            return true;
+        else
+            return false;
     }
 
 }

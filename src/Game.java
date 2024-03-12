@@ -8,35 +8,46 @@ import javax.swing.*;
 import java.lang.Thread;
 
 
-public class Game extends JPanel implements KeyListener {
+public class Game extends JPanel implements KeyListener, Runnable {
     
     public final static int WIDTH = 600, HEIGHT = 600;
-    public final static int PIXEL_FOR_SIDE = 30;
-    public int speed = 100;
+    public final static int PIXEL_FOR_SIDE = 3;
+    public final int speed = 500;
     private Pixel apple;
     private Snake snake;
     private char direction;
-    private boolean gameOver, repainted;
+    private boolean gameOver, win;
+    private boolean repainted;
     private int score;
 
     Game() {
         // inizializzo le variabili di gioco
-        speed = 100;
         direction = 'R';
         gameOver = false;
+        win = false;
         repainted = false;
 
         // inizializzo il serpente
+        /*
         snake = new Snake();
-        int x = 4, y = PIXEL_FOR_SIDE / 2;
+        int x = 3, y = PIXEL_FOR_SIDE / 2;
 
         for(int i = 0; i < 4; i ++){
             snake.add(new Pixel(x, y));
             x --;
         }
+        */
+
+        snake = new Snake();
+        int x = 0, y = PIXEL_FOR_SIDE / 2;
+
+        for(int i = 0; i < 1; i ++){
+            snake.add(new Pixel(x, y));
+            x --;
+        }
 
         // inizializzo la mela
-        apple = new Pixel(PIXEL_FOR_SIDE / 5 * 4, PIXEL_FOR_SIDE / 2);
+        apple = new Pixel(PIXEL_FOR_SIDE / 3 * 2, PIXEL_FOR_SIDE / 2);
 
         // impostazioni varie del pannello di gioco
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -47,6 +58,36 @@ public class Game extends JPanel implements KeyListener {
     }
 
 
+    @Override
+    public void run() {
+        // gioco eseguito in loop finchè non si perde o si vince
+        while(!gameOver && !win) {
+
+            gameOver = snake.gameOver(direction);
+            
+            if(snake.eatApple(apple, direction)) {
+                score ++;
+                win = snake.win();
+            }
+            else
+                snake.move(direction);
+
+            if(!gameOver) {
+                repaint();
+                repainted = true;
+            }
+
+            //delay per ogni spostamento
+            try {
+                Thread.sleep(speed);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    @Override
     public void paint(Graphics g) {
         // ridisegno il pannello di gioco
         super.paintComponent(g);
@@ -76,11 +117,17 @@ public class Game extends JPanel implements KeyListener {
             g.fillRect((Pixel.SIZE * snake.get(i).getX()), (Pixel.SIZE * snake.get(i).getY()), Pixel.SIZE, Pixel.SIZE);
     
         // disegno la mela
-        g.setColor(new Color(200, 10, 10));
-        g.fillOval((Pixel.SIZE * apple.getX()), (Pixel.SIZE * apple.getY()), Pixel.SIZE, Pixel.SIZE);
+        if(!win) {
+            g.setColor(new Color(200, 10, 10));
+            g.fillOval((Pixel.SIZE * apple.getX()), (Pixel.SIZE * apple.getY()), Pixel.SIZE, Pixel.SIZE);
+        }
     
         // disegno il punteggio
-        g.setColor(Color.WHITE);
+        if(snake.get(0).hasSameCoordinatesOf(new Pixel(1, 0)))
+            g.setColor(Color.BLACK);
+        else
+            g.setColor(Color.WHITE);
+            
         try {
             Font font = Font.createFont(Font.TRUETYPE_FONT, new File("res/digital-7.ttf"));
             g.setFont(font.deriveFont(Font.PLAIN,38));
@@ -93,37 +140,10 @@ public class Game extends JPanel implements KeyListener {
     }
 
 
-    public void play() {
-        // gioco eseguito in loop finchè non si perde o si vince
-        while(!gameOver) {
-
-            gameOver = snake.gameOver(direction);
-            
-            if(snake.eatApple(apple, direction))
-                score ++;
-            else
-                snake.move(direction);
-
-            if(!gameOver) {
-                repaint();
-                repainted = true;
-            }
-            else
-                System.out.println("game over");
-
-            //delay per ogni spostamento
-            try {
-                Thread.sleep(speed);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
+    @Override
     public void keyPressed(KeyEvent e) {
+        // ascoltatore della tastiera che cambia la direzione del serpente
         if(repainted) {
-            // ascoltatore della tastiera che cambia la direzione del serpente
             if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
                 if(direction != 'L') {
                     direction = 'R';
@@ -149,9 +169,21 @@ public class Game extends JPanel implements KeyListener {
     }
             
 
+    public boolean getGameOver() {
+        return gameOver;
+    }
+
+
+    public boolean getWin() {
+        return win;
+    }
+
+
+    @Override
     public void keyTyped(KeyEvent e) {}
             
 
+    @Override
     public void keyReleased(KeyEvent e) {}
 
 }
