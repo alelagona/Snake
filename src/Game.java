@@ -11,8 +11,8 @@ import java.lang.Thread;
 public class Game extends JPanel implements KeyListener, Runnable {
     
     public final static int WIDTH = 600, HEIGHT = 600;
-    public final static int PIXEL_FOR_SIDE = 3;
-    public final int speed = 500;
+    public final static int PIXEL_FOR_SIDE = 25;
+    public final int speed = 120;
     private Pixel apple;
     private Snake snake;
     private char direction;
@@ -26,22 +26,13 @@ public class Game extends JPanel implements KeyListener, Runnable {
         gameOver = false;
         win = false;
         repainted = false;
+        score = 0;
 
         // inizializzo il serpente
-        /*
         snake = new Snake();
         int x = 3, y = PIXEL_FOR_SIDE / 2;
 
-        for(int i = 0; i < 4; i ++){
-            snake.add(new Pixel(x, y));
-            x --;
-        }
-        */
-
-        snake = new Snake();
-        int x = 0, y = PIXEL_FOR_SIDE / 2;
-
-        for(int i = 0; i < 1; i ++){
+        for(int i = 0; i < 3; i ++){
             snake.add(new Pixel(x, y));
             x --;
         }
@@ -136,7 +127,10 @@ public class Game extends JPanel implements KeyListener, Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        g.drawString("Score: " + String.valueOf(score), 245, 40);
+        if(score < 10)
+            g.drawString("Score: " + String.valueOf(score), 240, 38);
+        else
+            g.drawString("Score: " + String.valueOf(score), 230, 38);
     }
 
 
