@@ -10,8 +10,8 @@ import java.lang.Thread;
 
 public class Game extends JPanel implements KeyListener, Runnable {
     
-    public final static int WIDTH = 600, HEIGHT = 600;
-    public final static int PIXEL_FOR_SIDE = 25;
+    public final static int WIDTH = 640, HEIGHT = 640;
+    public final static int PIXEL_FOR_SIDE = 16;
     public final int speed = 120;
     private Pixel apple;
     private Snake snake;
