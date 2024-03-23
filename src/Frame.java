@@ -32,11 +32,11 @@ public class Frame extends JFrame implements Runnable {
         }
 
         if(game.getGameOver()) {
-            ImageIcon icon = new ImageIcon("res/cross.png");
+            ImageIcon icon = new ImageIcon("res/sad.png");
 
             int choice = JOptionPane.showConfirmDialog(null,
                 "Would you like to start a new game?",
-                "You lose!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
+                "You loose!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
 
             if(choice == JOptionPane.YES_OPTION) {
                 dispose();
@@ -45,7 +45,7 @@ public class Frame extends JFrame implements Runnable {
                 System.exit(choice);
             }
         } else if(game.getWin()) {
-            ImageIcon icon = new ImageIcon("res/check.png");
+            ImageIcon icon = new ImageIcon("res/happy.png");
             int choice = JOptionPane.showConfirmDialog(null,
             "Would you like to start a new game?",
             "Hai win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
