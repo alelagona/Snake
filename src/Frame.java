@@ -48,7 +48,7 @@ public class Frame extends JFrame implements Runnable {
             ImageIcon icon = new ImageIcon("res/happy.png");
             int choice = JOptionPane.showConfirmDialog(null,
             "Would you like to start a new game?",
-            "Hai win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
+            "You win!", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, icon);
 
             if(choice == JOptionPane.YES_OPTION) {
                 dispose();
