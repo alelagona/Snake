@@ -137,27 +137,27 @@ public class Game extends JPanel implements KeyListener, Runnable {
     @Override
     public void keyPressed(KeyEvent e) {
         // ascoltatore della tastiera che cambia la direzione del serpente
-        if(repainted) {
-            if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                if(direction != 'L') {
-                    direction = 'R';
-                    repainted = false;
-                }
-            } else if(e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
-                if(direction != 'D') {
-                    direction = 'U';
-                    repainted = false;
-                }
-            } else if(e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
-                if(direction != 'R') {
-                    direction = 'L';                    
-                    repainted = false;
-                }
-            } else if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
-                if(direction != 'U') {
-                    direction = 'D';
-                    repainted = false;
-                }
+        if(!repainted) {
+            e.consume();
+        } else if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            if(direction != 'L') {
+                direction = 'R';
+                repainted = false;
+            }
+        } else if(e.getKeyCode() == KeyEvent.VK_W || e.getKeyCode() == KeyEvent.VK_UP) {
+            if(direction != 'D') {
+                direction = 'U';
+                repainted = false;
+            }
+        } else if(e.getKeyCode() == KeyEvent.VK_A || e.getKeyCode() == KeyEvent.VK_LEFT) {
+            if(direction != 'R') {
+                direction = 'L';                    
+                repainted = false;
+            }
+        } else if(e.getKeyCode() == KeyEvent.VK_S || e.getKeyCode() == KeyEvent.VK_DOWN) {
+            if(direction != 'U') {
+                direction = 'D';
+                repainted = false;
             }
         }
     }
