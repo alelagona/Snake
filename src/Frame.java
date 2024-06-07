@@ -7,15 +7,15 @@ public class Frame extends JFrame implements Runnable {
 
     Frame() {
         super("Snake");
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setResizable(false);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setResizable(false);
         
         game = new Game();
         
-        this.add(game);
-        this.pack();
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
+        add(game);
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
 
         Thread frameThread = new Thread(this);
         frameThread.start();

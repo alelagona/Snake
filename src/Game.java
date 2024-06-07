@@ -21,14 +21,12 @@ public class Game extends JPanel implements KeyListener, Runnable {
     private int score;
 
     Game() {
-        // inizializzo le variabili di gioco
         direction = 'R';
         gameOver = false;
         win = false;
         repainted = false;
         score = 0;
 
-        // inizializzo il serpente
         snake = new Snake();
         int x = 3, y = PIXEL_FOR_SIDE / 2;
 
@@ -37,21 +35,18 @@ public class Game extends JPanel implements KeyListener, Runnable {
             x --;
         }
 
-        // inizializzo la mela
         apple = new Pixel(PIXEL_FOR_SIDE / 3 * 2, PIXEL_FOR_SIDE / 2);
 
-        // impostazioni varie del pannello di gioco
-        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        this.setBackground(Color.DARK_GRAY);
-        this.setFocusable(true);
-        this.requestFocus();
-        this.addKeyListener(this);
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setBackground(Color.DARK_GRAY);
+        setFocusable(true);
+        requestFocus();
+        addKeyListener(this);
     }
 
 
     @Override
     public void run() {
-        // gioco eseguito in loop finchè non si perde o si vince
         while(!gameOver && !win) {
 
             gameOver = snake.gameOver(direction);
@@ -68,7 +63,6 @@ public class Game extends JPanel implements KeyListener, Runnable {
                 repainted = true;
             }
 
-            //delay per ogni spostamento
             try {
                 Thread.sleep(speed);
             } catch (Exception e) {
@@ -80,14 +74,12 @@ public class Game extends JPanel implements KeyListener, Runnable {
 
     @Override
     public void paint(Graphics g) {
-        // ridisegno il pannello di gioco
         super.paintComponent(g);
-        this.draw(g);
+        draw(g);
     }
 
 
     private void draw(Graphics g) {
-        // disegno le linee della griglia di gioco
         int x = Pixel.SIZE, y = Pixel.SIZE;
         g.setColor(new Color(51, 51, 51));
         for(int i = 0; i < (PIXEL_FOR_SIDE - 1); i ++) {
@@ -98,22 +90,18 @@ public class Game extends JPanel implements KeyListener, Runnable {
             y += Pixel.SIZE;
         }
 
-        // disegno la testa del serpente
         g.setColor(Color.WHITE);
         g.fillRect((Pixel.SIZE * snake.get(0).getX()), (Pixel.SIZE * snake.get(0).getY()), Pixel.SIZE, Pixel.SIZE);
     
-        // disegno il corpo del serpente
         g.setColor(new Color(40, 200, 150));
         for(int i = 1; i < snake.size(); i ++)
             g.fillRect((Pixel.SIZE * snake.get(i).getX()), (Pixel.SIZE * snake.get(i).getY()), Pixel.SIZE, Pixel.SIZE);
     
-        // disegno la mela
         if(!win) {
             g.setColor(new Color(200, 10, 10));
             g.fillOval((Pixel.SIZE * apple.getX()), (Pixel.SIZE * apple.getY()), Pixel.SIZE, Pixel.SIZE);
         }
     
-        // disegno il punteggio
         if(snake.get(0).hasSameCoordinatesOf(new Pixel(1, 0)))
             g.setColor(Color.BLACK);
         else
@@ -136,7 +124,6 @@ public class Game extends JPanel implements KeyListener, Runnable {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        // ascoltatore della tastiera che cambia la direzione del serpente
         if(!repainted) {
             e.consume();
         } else if(e.getKeyCode() == KeyEvent.VK_D || e.getKeyCode() == KeyEvent.VK_RIGHT) {

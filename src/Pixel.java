@@ -49,7 +49,7 @@ public class Pixel {
 
 
     public boolean hasSameCoordinatesOf(Pixel p) {
-        if(this.x == p.getX() && this.y == p.getY())
+        if(x == p.getX() && y == p.getY())
             return true;
         else
             return false;
