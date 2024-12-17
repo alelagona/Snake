@@ -12,7 +12,7 @@ public class Game extends JPanel implements KeyListener, Runnable {
     
     public final static int WIDTH = 640, HEIGHT = 640;
     public final static int PIXEL_FOR_SIDE = 16;
-    public final int speed = 120;
+    public final int speed = 160;
     private Pixel apple;
     private Snake snake;
     private char direction;
