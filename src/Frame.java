@@ -62,5 +62,4 @@ public class Frame extends JFrame implements Runnable {
             }
         }
     }
-
 }
